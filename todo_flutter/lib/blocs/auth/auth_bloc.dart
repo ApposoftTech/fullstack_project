@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.apiService}) : super(AuthInitial()) {
     on<LoginEvent>(_onLogin);
+    on<RegisterEvent>(_onRegister);
     on<LogoutEvent>(_onLogout);
   }
 
@@ -24,6 +25,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(token: token));
     } catch (e) {
       emit(AuthError('Login failed! Check credentials.'));
+    }
+  }
+
+  Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      await apiService.register(event.email, event.password);
+
+      final loginResponse = await apiService.login(event.email, event.password);
+      final token = loginResponse.data['access_token'];
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+
+      emit(AuthAuthenticated(token: token));
+    } catch (e) {
+      emit(AuthError('Registration failed! Try again.'));
     }
   }
 

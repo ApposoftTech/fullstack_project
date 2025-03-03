@@ -27,6 +27,10 @@ class ApiService {
         .post('/auth/login', data: {'email': email, 'password': password});
   }
 
+  Future<void> register(String email, String password) async {
+    await _dio.post('/auth/register', data: {'email': email, 'password': password});
+  }
+
   Future<Response> fetchTasks({int page = 1, int limit = 10}) async {
     return await _dio
         .get('/tasks', queryParameters: {'page': page, 'limit': limit});

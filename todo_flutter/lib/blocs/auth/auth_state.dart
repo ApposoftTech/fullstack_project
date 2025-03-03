@@ -17,6 +17,8 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [token];
 }
 
+class AuthRegistered extends AuthState {}
+
 class AuthError extends AuthState {
   final String message;
   AuthError(this.message);
