@@ -2,7 +2,7 @@
 
 # Mobile Screenshots:
 
-![1_login](https://github.com/user-attachments/assets/c62be630-1af7-43aa-af64-8f0a02cd7374)
+![1_login](https://github.com/user-attachments/assets/c62be630-1af7-43aa-af64-8f0a02cd7374 {width=40px height=400px})
 
 ![2_register](https://github.com/user-attachments/assets/8d4fa2f6-5d9a-430f-ab29-f1b3a8f3a3d7)
 
