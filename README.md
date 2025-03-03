@@ -1,5 +1,5 @@
 # Fullstack Project
-To-Do List application where users can create, read, update, and delete tasks. The application will consist of a backend (NestJS + PostgreSQL) and a frontend (Flutter).
+To-Do List application where users can create, read, update, and delete tasks. The application consists of a backend (NestJS + PostgreSQL) and a frontend (Flutter).
 
 # Mobile Screenshots:
 
