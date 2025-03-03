@@ -10,9 +10,24 @@ export class TaskService {
     private taskRepository: Repository<Task>,
   ) {}
 
-  async findAll(): Promise<Task[]> {
+/*   async findAll(): Promise<Task[]> {
     return this.taskRepository.find();
-  }
+  } */
+
+    async findAll(page: number = 1, limit: number = 10) {
+      const [tasks, total] = await this.taskRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+        order: { created_at: 'DESC' },
+      });
+  
+      return {
+        totalCount: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        tasks,
+      };
+    }
 
   async findOne(id: string): Promise<Task> {
     const task = await this.taskRepository.findOne({ where: { id } });

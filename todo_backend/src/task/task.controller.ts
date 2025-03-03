@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req, Query } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt_auth.guard';
 
 @ApiTags('tasks')
@@ -10,14 +10,25 @@ import { JwtAuthGuard } from '../auth/jwt_auth.guard';
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @Get()
+/*   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Retrieve all tasks (Auth Required)' })
   @ApiResponse({ status: 200, description: 'Returns an array of tasks.' })
   findAll(@Req() req): Promise<Task[]> {
     console.log('Authenticated User:', req.user);
     return this.taskService.findAll();
+  } */
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieve paginated tasks (Auth Required)' })
+  @ApiResponse({ status: 200, description: 'Returns paginated tasks.' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page (default: 10)' })
+  async findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    return this.taskService.findAll(Number(page), Number(limit));
   }
+
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
