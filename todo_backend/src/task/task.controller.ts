@@ -1,53 +1,65 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt_auth.guard';
 
-@ApiTags('tasks') // Grouping under "tasks"
+@ApiTags('tasks')
+@ApiBearerAuth() 
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all tasks' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieve all tasks (Auth Required)' })
   @ApiResponse({ status: 200, description: 'Returns an array of tasks.' })
-  findAll(): Promise<Task[]> {
+  findAll(@Req() req): Promise<Task[]> {
+    console.log('Authenticated User:', req.user);
     return this.taskService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a specific task by ID' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Retrieve a specific task by ID (Auth Required)' })
   @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiResponse({ status: 200, description: 'Returns the task.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
-  findOne(@Param('id') id: string): Promise<Task> {
+  findOne(@Param('id') id: string, @Req() req): Promise<Task> {
+    console.log('Authenticated User:', req.user);
     return this.taskService.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new task' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create a new task (Auth Required)' })
   @ApiBody({ type: Task, description: 'Task object to be created' })
   @ApiResponse({ status: 201, description: 'Task successfully created.' })
-  create(@Body() taskData: Partial<Task>): Promise<Task> {
+  create(@Body() taskData: Partial<Task>, @Req() req): Promise<Task> {
+    console.log('Authenticated User:', req.user);
     return this.taskService.create(taskData);
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update an existing task' })
+  @UseGuards(JwtAuthGuard) 
+  @ApiOperation({ summary: 'Update an existing task (Auth Required)' })
   @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiBody({ type: Task, description: 'Updated task object' })
   @ApiResponse({ status: 200, description: 'Task successfully updated.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
-  update(@Param('id') id: string, @Body() taskData: Partial<Task>): Promise<Task> {
+  update(@Param('id') id: string, @Body() taskData: Partial<Task>, @Req() req): Promise<Task> {
+    console.log('Authenticated User:', req.user);
     return this.taskService.update(id, taskData);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a task' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete a task (Auth Required)' })
   @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiResponse({ status: 200, description: 'Task successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id') id: string, @Req() req): Promise<void> {
+    console.log('Authenticated User:', req.user);
     return this.taskService.remove(id);
   }
 }
